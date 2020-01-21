@@ -1,0 +1,14 @@
+{
+  "page1": {
+      "content1": {
+        "edit": true
+      },
+      "content2": true,
+  },
+  "page2": true,
+  "page3": {
+    "add": {
+        "props": [],
+    }
+  }
+}
