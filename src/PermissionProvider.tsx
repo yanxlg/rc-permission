@@ -1,43 +1,39 @@
 import React from 'react';
 
-type Prop = "visibility"|"disable"|"display";
+export type ControlType = "render"|"display"|"visibility"|"disabled"|"none";
 
-type CheckType = "level"|"flat";
 
-type IPermissionChildren = {
-    prop?:Prop;
+export type PermissionItem = {
+    type?:ControlType;
+    style?:React.CSSProperties;
+    active?:boolean;
     children?:{
-        [key:string]: IPermissionJSONItem;
-    }
+        [key:string]: PermissionItem;
+    };
+};
+
+
+export type PermissionBannedMap = {
+    [key:string]:PermissionItem
 }
 
-type BooleanTrue = Extract<boolean,true>;
-
-export type IPermissionJSONItem = BooleanTrue|IPermissionChildren;
-
-
-export type IPermissionJSON = {
-    [key:string]:IPermissionJSONItem
+export declare interface PermissionContextData {
+    bannedMap?:PermissionBannedMap;// 无权限列表
 }
 
-export declare interface IPermissionContextData {
-    json?:IPermissionJSON;
-    checkType?:CheckType; // default level
-}
+const PermissionContext:React.Context<PermissionContextData> = React.createContext(null);
 
-const PermissionContext:React.Context<IPermissionContextData> = React.createContext(null);
 
-export default class PermissionProvider extends React.PureComponent<IPermissionContextData>{
-    render() {
-        const {json,checkType,children} = this.props;
-        return (
-            <PermissionContext.Provider value={{json,checkType}}>
-                {
-                    children
-                }
-            </PermissionContext.Provider>
-        );
-    }
-}
+const PermissionProvider:React.FC<PermissionContextData>=({bannedMap,children})=>{
+    return (
+        <PermissionContext.Provider value={{bannedMap}}>
+            {
+                children
+            }
+        </PermissionContext.Provider>
+    );
+};
+
+export default PermissionProvider;
 
 export {PermissionContext};

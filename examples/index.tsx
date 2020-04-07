@@ -7,29 +7,35 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import "./index.css";
 import {Permission} from "../src";
-import PermissionProvider, {IPermissionJSON} from "../src/PermissionProvider";
+import PermissionProvider, {PermissionBannedMap} from "../src/PermissionProvider";
 
 
 class Test extends React.Component<{},{}>{
     render(){
         return (
-            <PermissionProvider json={{
+            <PermissionProvider bannedMap={{
                 "pageName1": {
                     children:{
                         "container1": {
+                            type:"none",
+                            style:{
+                                backgroundColor:"red"
+                            }
                         },
-                        "container2": true
+                        "container2": {
+                        }
                     }
                 },
-                "pageName2": true,
+                "pageName2": {
+                },
                 "pageName3": {
                     children:{
                         "action1": {
-                            "prop": "visibility",
+                            "type": "visibility",
                         }
                     }
                 }
-            } as IPermissionJSON}>
+            } as PermissionBannedMap}>
                 <div>
                     dsads
                     <Permission pid="pageName1">

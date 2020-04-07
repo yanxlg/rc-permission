@@ -1,16 +1,13 @@
-import React from "react";
-import {PermissionContext, IPermissionContextData} from "./PermissionProvider";
+import React, {useContext} from "react";
+import {PermissionContext, PermissionContextData} from "./PermissionProvider";
 
-declare interface IPermissionReceiverProps {
-    children: (permissionContext:IPermissionContextData) => React.ReactNode;
+declare interface PermissionReceiverProps {
+    children: (permissionContext:PermissionContextData) => React.ReactElement;
 }
 
-class PermissionReceiver extends React.Component<IPermissionReceiverProps>{
-    static contextType = PermissionContext;
-    public context:IPermissionContextData;
-    render(){
-        return this.props.children(this.context);
-    }
-}
+const PermissionReceiver:React.FC<PermissionReceiverProps> = ({children})=>{
+    const context = useContext(PermissionContext);
+    return children(context);
+};
 
 export default PermissionReceiver;
