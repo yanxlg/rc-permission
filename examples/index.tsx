@@ -6,60 +6,71 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import "./index.css";
-import {Permission} from "../src";
-import PermissionProvider, {PermissionBannedMap} from "../src/PermissionProvider";
+import PermissionComponent from "../src/ComponentPermission";
+import PermissionProvider, { IPermissionTree } from "../src/Provider";
+import { Tooltip } from "antd";
+import "antd/es/tooltip/style/index.css";
+import RouterPermission from "../src/RouterPermission";
+import { Permission } from "../src/decorator";
+const toolTip = <Tooltip title="" />;
 
+@Permission({ pid: "2222" })
+class B extends React.Component<{ text: string }, any> {
+    render() {
+        return <div style={this.props.style}>{this.props.text}sadasdsa</div>;
+    }
+}
 
-class Test extends React.Component<{},{}>{
-    render(){
+class Test extends React.Component<{}, {}> {
+    componentDidMount() {
+        // @ts-ignore
+    }
+
+    render() {
         return (
-            <PermissionProvider bannedMap={{
-                "pageName1": {
-                    children:{
-                        "container1": {
-                            type:"none",
-                            style:{
-                                backgroundColor:"red"
+            <PermissionProvider
+                pTree={
+                    {
+                        "111": {
+                            children: {
+                                "2222": {
+                                    access: false,
+                                    styles: {
+                                        active: {
+                                            backgroundColor: "red"
+                                        },
+                                        inActive: {
+                                            backgroundColor: "green"
+                                        }
+                                    }
+                                }
                             }
-                        },
-                        "container2": {
                         }
-                    }
-                },
-                "pageName2": {
-                },
-                "pageName3": {
-                    children:{
-                        "action1": {
-                            "type": "visibility",
-                        }
-                    }
+                    } as IPermissionTree
                 }
-            } as PermissionBannedMap}>
+            >
                 <div>
                     dsads
-                    <Permission pid="pageName1">
+                    <PermissionComponent pid={"111"}>
                         <div>
-                            111
-                            <div>
-                                2222
-                            </div>
-                            <Permission pid="container1">
-                                <div>
-                                    3333
-                                </div>
-                            </Permission>
+                            <PermissionComponent pid={"2222"} toolTipWrap={toolTip} toolTip={"我是提示信息"}>
+                                <div>122</div>
+                            </PermissionComponent>
+                            <B text="yyyyyyy" />
                         </div>
-                    </Permission>
+                    </PermissionComponent>
                 </div>
+                <RouterPermission pid="page1">
+                    <div>111111</div>
+                </RouterPermission>
             </PermissionProvider>
-        )
+        );
     }
 }
 
 ReactDOM.render(
     <div>
-        <Test/>
+        <Test />
     </div>,
-    document.getElementById('__react-content'),
+    document.getElementById("__react-content")
 );
