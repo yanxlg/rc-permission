@@ -15,7 +15,7 @@ import { Permission } from "../src/decorator";
 const toolTip = <Tooltip title="" />;
 
 @Permission({ pid: "2222" })
-class B extends React.Component<{ text: string }, any> {
+class B extends React.PureComponent<{ text: string }, any> {
     render() {
         return <div style={this.props.style}>{this.props.text}sadasdsa</div>;
     }

@@ -27,7 +27,7 @@ type ComponentPermissionProps = {
 
 type IPProps = RouterPermissionProps | ComponentPermissionProps;
 
-type RouterClass = React.ComponentClass<any, any>;
+// type RouterClass = React.ComponentClass<any, any>;
 
 type ComponentClass<T extends IPermissionChildProps> = React.ComponentClass<T>;
 
@@ -43,7 +43,7 @@ type IIPermissionChildProps = IPermissionChildProps & {
 function Permission<T>(config: IPProps) {
     const { router, ..._config } = config;
     if (router) {
-        return function wrapWithConnect<Function>(WrappedComponent: RouterClass) {
+        return function wrapWithConnect<T extends any>(WrappedComponent: ComponentClass<T>) {
             return (function(props: any) {
                 return RouterPermissionWrap(<WrappedComponent {...props} />, _config);
             } as unknown) as any;

@@ -83,13 +83,26 @@ const getChildren = (
         // 组件props上tooltip强制覆盖
         assert(_toolTip, "Permission ToolTip control must have tooltip property.");
         assert(toolTipWrap, "Permission ToolTip control must have toolTipWrap component.");
-        if (toolTip && toolTipWrap && !access) {
+
+        // fix Popconfirm
+        if ("onConfirm" in mergeProps) {
+            mergeProps.disabled = true;
+        } else if (mergeProps.popConfirmProps && "onConfirm" in mergeProps.popConfirmProps) {
+            mergeProps.popConfirmProps.disabled = true;
+        }
+
+        if (_toolTip && toolTipWrap && !access) {
+            // children 为disabled状态
+            const child = React.cloneElement(children, { ...mergeProps, onClick: undefined, _privateClick: true }, children.props?.children); // onClick去掉
+            if (children.props?.disabled) {
+                return child;
+            }
             return React.cloneElement(
                 toolTipWrap,
                 {
-                    title: toolTip
+                    title: _toolTip
                 },
-                React.cloneElement(children, mergeProps, children.props?.children)
+                child
             );
         }
     }
@@ -171,4 +184,25 @@ const PermissionComponent = (props: PermissionProps) => {
     }, [children, pTree]);
 };
 
+const usePermissionFilter = (
+    items: Array<{
+        pid: string;
+        [key: string]: any;
+    }>
+) => {
+    const context = useContext(Context);
+    const { format, pTree } = context;
+    const owner = getOwner();
+
+    return useMemo(() => {
+        return items.filter(item => {
+            const pidList = getPidList(owner, format, item.pid);
+            const check = checkPermission(pidList, pTree);
+            return check === true || (typeof check === "object" && (check.access === void 0 || check.access === true));
+        });
+    }, [items, pTree]);
+};
+
 export default React.memo<PermissionProps>(PermissionComponent);
+
+export { usePermissionFilter };
