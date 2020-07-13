@@ -60,9 +60,6 @@ class Test extends React.Component<{}, {}> {
                         </div>
                     </PermissionComponent>
                 </div>
-                <RouterPermission pid="page1">
-                    <div>111111</div>
-                </RouterPermission>
             </PermissionProvider>
         );
     }

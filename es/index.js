@@ -19,7 +19,6 @@ export { Permission } from "./decorator";
 export { Context as PermissionContext, default as PermissionProvider } from "./Provider";
 import { default as PermissionRouter } from "./RouterPermission";
 import { default as PermissionComponent, usePermissionFilter } from "./ComponentPermission";
-export { useDataPermission } from "./DataPermission";
 
 var PermissionRouterWrap = function PermissionRouterWrap(Component, config) {
   return function (props) {

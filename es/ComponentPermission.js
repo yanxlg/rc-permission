@@ -14,13 +14,26 @@ var __assign = this && this.__assign || function () {
   return __assign.apply(this, arguments);
 };
 
+var __rest = this && this.__rest || function (s, e) {
+  var t = {};
+
+  for (var p in s) {
+    if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+  }
+
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+
 import React, { useContext, useMemo } from "react";
 import { Context } from "./Provider";
 import * as assert from "assert";
 import classNames from "classnames";
 import { getOwner } from "./ReactInstanceMap"; // 需要缓存及局部缓存
 
-var getChildren = function getChildren(pItem, children, defaultControl, customStyles, customClassNames, fallback, toolTipWrap, defaultToolTip, toolTip) {
+var getChildren = function getChildren(pItem, children, defaultControl, customStyles, customClassNames, fallback, toolTipWrap, defaultToolTip, toolTip, extraProps) {
   var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o; // 设置children属性
 
 
@@ -48,12 +61,12 @@ var getChildren = function getChildren(pItem, children, defaultControl, customSt
     visibility: "hidden"
   } : {}), style), customStyle);
 
-  var mergeProps = __assign(__assign(__assign({}, children.props), {
+  var mergeProps = __assign(__assign(__assign(__assign({}, children.props), {
     style: mergeStyle,
     className: mergeClassName
   }), control === "disabled" && !access ? {
     disabled: true
-  } : {}); // fallback优先级最高
+  } : {}), extraProps); // fallback优先级最高
 
 
   if (!access && fallback) {
@@ -161,17 +174,22 @@ export var checkPermission = function checkPermission(pidList, pidMap) {
 };
 
 var PermissionComponent = function PermissionComponent(props) {
-  var context = useContext(Context);
-  assert(context !== null, "Permission Component must be used by wrapped with PermissionProvider");
-  assert(props.pid, "Permission Component must have pid");
-  assert(props.children, "Permission Component must have children");
-  var format = context.format,
-      pTree = context.pTree;
-  var children = props.children,
-      pid = props.pid,
+  var pid = props.pid,
+      fallback = props.fallback,
+      children = props.children,
+      control = props.control,
       styles = props.styles,
       classNames = props.classNames,
-      fallback = props.fallback;
+      _toolTipWrap = props.toolTipWrap,
+      toolTip = props.toolTip,
+      extra = __rest(props, ["pid", "fallback", "children", "control", "styles", "classNames", "toolTipWrap", "toolTip"]);
+
+  var context = useContext(Context);
+  assert(context !== null, "Permission Component must be used by wrapped with PermissionProvider");
+  assert(pid, "Permission Component must have pid");
+  assert(children, "Permission Component must have children");
+  var format = context.format,
+      pTree = context.pTree;
   var owner = getOwner();
   var pidList = useMemo(function () {
     return getPidList(owner, format, pid);
@@ -179,10 +197,10 @@ var PermissionComponent = function PermissionComponent(props) {
   var check = useMemo(function () {
     return checkPermission(pidList, pTree);
   }, [pTree]);
-  var toolTipWrap = props.toolTipWrap || context.toolTipWrap; // 缓存创建节点
+  var toolTipWrap = _toolTipWrap || context.toolTipWrap; // 缓存创建节点
 
   return useMemo(function () {
-    return getChildren(check, children, props.control || context.defaultControl || "render", styles, classNames, fallback, toolTipWrap, context.defaultToolTip, props.toolTip);
+    return getChildren(check, children, control || context.defaultControl || "render", styles, classNames, fallback, toolTipWrap, context.defaultToolTip, toolTip, extra);
   }, [children, pTree]);
 };
 

@@ -73,7 +73,6 @@ declare interface IPermissionProviderProps {
     checkLogin?: () => boolean; // 外部传入用于判断登录状态的方法
     history?: H.History;
     Page_403?: React.ReactNode; // 403 Page
-    dataPermission?: string[]; // 数据权限列表
 }
 
 export declare interface IPermissionContext extends IPermissionProviderProps {
@@ -84,7 +83,7 @@ const Context = React.createContext<IPermissionContext>(null);
 
 const Provider: React.FC<IPermissionProviderProps> = ({ pTree, children, ...props }) => {
     const [tree, updateTree] = useState(pTree || {});
-    return <Context.Provider value={{ pTree: tree, updateTree, ...props, dataPermission: props.dataPermission || [] }}>{children}</Context.Provider>;
+    return <Context.Provider value={{ pTree: tree, updateTree, ...props }}>{children}</Context.Provider>;
 };
 
 export default React.memo<PropsWithChildren<IPermissionProviderProps>>(Provider);

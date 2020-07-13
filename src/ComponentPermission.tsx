@@ -38,7 +38,8 @@ const getChildren = (
     fallback?: PermissionProps["fallback"],
     toolTipWrap?: PermissionProps["toolTipWrap"],
     defaultToolTip?: string,
-    toolTip?: string
+    toolTip?: string,
+    extraProps?: any
 ) => {
     // 设置children属性
     if (pItem === true) {
@@ -72,7 +73,8 @@ const getChildren = (
         ...children.props,
         style: mergeStyle,
         className: mergeClassName,
-        ...(control === "disabled" && !access ? { disabled: true } : {})
+        ...(control === "disabled" && !access ? { disabled: true } : {}),
+        ...extraProps
     };
     // fallback优先级最高
     if (!access && fallback) {
@@ -167,20 +169,20 @@ export const checkPermission = (pidList: string[], pidMap: IPermissionTree) => {
 };
 
 const PermissionComponent = (props: PermissionProps) => {
+    const { pid, fallback, children, control, styles, classNames, toolTipWrap: _toolTipWrap, toolTip, ...extra } = props;
     const context = useContext(Context);
     assert(context !== null, "Permission Component must be used by wrapped with PermissionProvider");
-    assert(props.pid, "Permission Component must have pid");
-    assert(props.children, "Permission Component must have children");
+    assert(pid, "Permission Component must have pid");
+    assert(children, "Permission Component must have children");
     const { format, pTree } = context;
 
-    const { children, pid, styles, classNames, fallback } = props;
     const owner = getOwner();
     const pidList = useMemo(() => getPidList(owner, format, pid), []);
     const check = useMemo(() => checkPermission(pidList, pTree), [pTree]);
-    const toolTipWrap = props.toolTipWrap || context.toolTipWrap;
+    const toolTipWrap = _toolTipWrap || context.toolTipWrap;
     // 缓存创建节点
     return useMemo(() => {
-        return getChildren(check, children, props.control || context.defaultControl || "render", styles, classNames, fallback, toolTipWrap, context.defaultToolTip, props.toolTip);
+        return getChildren(check, children, control || context.defaultControl || "render", styles, classNames, fallback, toolTipWrap, context.defaultToolTip, toolTip, extra);
     }, [children, pTree]);
 };
 
